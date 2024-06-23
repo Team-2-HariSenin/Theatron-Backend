@@ -8,7 +8,8 @@ const { cors } = require("./middlewares/app");
 const authRouter = require("./routes/auth.router.js");
 const movieRouter = require("./routes/movie.router.js");
 const watchlistRouter = require("./routes/watchlist.router.js");
-const ratingRouter = require("./routes/rate.router.js");
+const rateRouter = require("./routes/rate.router.js");
+const adminRouter = require("./routes/admin.router.js");
 
 const app = express();
 
@@ -26,7 +27,8 @@ if (!process.env.JWT_SECRET) {
 app.use("/api/auth", authRouter);
 app.use("/api/movie", movieRouter);
 app.use("/api/watchlist", watchlistRouter);
-app.use("/api/rate", ratingRouter);
+app.use("/api/rate", rateRouter);
+app.use("/api/admin", adminRouter);
 
 app.listen(process.env.SERVER_PORT || 3000, () => {
   console.log("Server Running");

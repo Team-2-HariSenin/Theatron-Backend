@@ -345,6 +345,57 @@
 }
 ```
 
+## Admin API Specification
+
+### Add Movie
+
+- Endpoint : POST api/admin/
+- Request Body :
+
+```json
+{
+  "name": "Nenek Gayung",
+  "overview": "Lorem Ipsum",
+  "url_poster": "www.example",
+  "url_image": "www.example",
+  "director": {
+    "id": 1,
+    "name": "Director1"
+  },
+  "writer": [
+    {
+      "id": 1,
+      "name": "Writer1"
+    }
+  ],
+  "star": [
+    {
+      "id": 1,
+      "name": "Star1"
+    }
+  ],
+  "category": [
+    {
+      "id": 1,
+      "name": "Category1"
+    }
+  ]
+}
+```
+
+- Respone Success :
+
+```json
+{
+  "message": "Rating Added / Update successfully",
+  "data": {
+    "id_user": 1,
+    "id_movie": 1,
+    "rate": 10
+  }
+}
+```
+
 # Cara Mendapatkan Url Video Trailer, Url Thumbnail Trailer, dll
 
 ## Gunakan "key" yang didapatkan dari movie detail
