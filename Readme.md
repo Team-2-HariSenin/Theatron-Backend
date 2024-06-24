@@ -349,7 +349,7 @@
 
 ### Add Movie
 
-- Endpoint : POST api/admin/
+- Endpoint : POST api/admin/add-movie
 - Request Body :
 
 ```json
@@ -393,6 +393,36 @@
     "id_movie": 1,
     "rate": 10
   }
+}
+```
+
+### Add Trailer
+
+- Endpoint : POST api/admin/add-trailer
+- Request Body :
+
+```json
+{
+  "id_movie":1,
+  "youtubeId": [{youtube video id}]
+}
+```
+
+- Respone Success :
+
+```json
+{
+  "message": "Trailer Added successfully",
+  "data": [
+    {
+      "id": 16,
+      "id_movie": 1,
+      "title": "Python Project to Scrape YouTube using YouTube Data API | Analyze and Visualize YouTube data",
+      "duration": "1.09.34",
+      "key": "SwSbnmqk3zY"
+    },
+    "Trailer already exists"
+  ]
 }
 ```
 
