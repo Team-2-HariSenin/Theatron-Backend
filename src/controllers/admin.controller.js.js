@@ -15,28 +15,17 @@ const axios = require("axios");
 
 const addMovie = async (req, res, next) => {
   const transaction = await sequelize.transaction();
-  const {
-    name,
-    overview,
-    url_poster,
-    url_image,
-    director,
-    writer,
-    star,
-    category,
-  } = req.body;
+  const { name, overview, director, writer, star, category } = req.body;
 
   let movie;
   let directorData;
   try {
     if (typeof director.id === "number") {
       movie = await MovieModel.create(
-        { attributes: ["id", "name", "overview", "url_poster", "url_image"] },
         {
           name,
           overview,
-          url_poster,
-          url_image,
+
           id_director: director.id,
         },
         { transaction }
@@ -56,12 +45,10 @@ const addMovie = async (req, res, next) => {
       );
 
       movie = await MovieModel.create(
-        { attributes: ["id", "name", "overview", "url_poster", "url_image"] },
         {
           name,
           overview,
-          url_poster,
-          url_image,
+
           id_director: createDirector.id,
         },
         { transaction }
@@ -74,12 +61,9 @@ const addMovie = async (req, res, next) => {
       });
     } else {
       movie = await MovieModel.create(
-        { attributes: ["id", "name", "overview", "url_poster", "url_image"] },
         {
           name,
           overview,
-          url_poster,
-          url_image,
         },
         { transaction }
       );
@@ -209,7 +193,7 @@ const addMovie = async (req, res, next) => {
 
     return res.json({
       message: "Movie added successfully",
-      data: { movie, director: directorData, stars, writers, categories },
+      data: movie,
     });
   } catch (error) {
     await transaction.rollback();
@@ -275,6 +259,9 @@ const addTrailer = async (req, res, next) => {
           return "Failed to fetch YouTube data";
         } else {
           const item = youtubeData.items[0];
+          if (!item) {
+            throw new Error(`${id} is not a valid YouTube ID`);
+          }
 
           return TrailerModel.create(
             {

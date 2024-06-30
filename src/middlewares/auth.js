@@ -11,7 +11,7 @@ const verifyToken = async (req, res, next) => {
 
     if (authHeader.split(" ").length !== 2) {
       return res.status(401).send({
-        message: "Invalid token1",
+        message: "Invalid token",
         data: null,
       });
     }
@@ -20,7 +20,7 @@ const verifyToken = async (req, res, next) => {
     const user = jwt.verify(token, process.env.JWT_SECRET);
     if (!user) {
       return res.status(401).send({
-        message: "Invalid token2",
+        message: "Invalid token",
         data: null,
       });
     }
@@ -32,7 +32,7 @@ const verifyToken = async (req, res, next) => {
   } catch (err) {
     if (err.name === "JsonWebTokenError") {
       return res.status(401).send({
-        message: "Invalid token3",
+        message: "Invalid token",
         data: null,
       });
     }
@@ -41,4 +41,47 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken };
+const verifyTokenAdmin = async (req, res, next) => {
+  try {
+    const authHeader = req.headers["authorization"] || "";
+
+    if (authHeader.split(" ").length !== 2) {
+      return res.status(401).send({
+        message: "Invalid token",
+        data: null,
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const user = jwt.verify(token, process.env.JWT_SECRET);
+    if (!user) {
+      return res.status(401).send({
+        message: "Invalid token",
+        data: null,
+      });
+    }
+
+    if (!user.isAdmin) {
+      return res.status(401).send({
+        message: "You are not an admin",
+        data: null,
+      });
+    }
+
+    // Save decoded user to request object
+    req.user = user;
+
+    next();
+  } catch (err) {
+    if (err.name === "JsonWebTokenError") {
+      return res.status(401).send({
+        message: "Invalid token",
+        data: null,
+      });
+    }
+
+    next(err);
+  }
+};
+
+module.exports = { verifyToken, verifyTokenAdmin };

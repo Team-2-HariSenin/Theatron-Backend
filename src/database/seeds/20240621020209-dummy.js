@@ -2,6 +2,7 @@
 
 const {
   user,
+  admin,
   rate,
   watchlist,
   movie,
@@ -23,6 +24,7 @@ module.exports = {
    */
   async up(queryInterface, _Sequelize) {
     await user.destroy({ truncate: true });
+    await admin.destroy({ truncate: true });
     await rate.destroy({ truncate: true });
     await watchlist.destroy({ truncate: true });
     await movie.destroy({ truncate: true });
@@ -61,6 +63,15 @@ module.exports = {
         id: 4,
         name: "Dandy",
         email: "dandy@example.com",
+        password:
+          "$2a$12$.HOb8SlLxGN4usHDihNaQe6IFDodXO09pO6Nfi.M96XzcTJ9F1HDu", // Qwerty123
+      },
+    ]);
+    await queryInterface.bulkInsert("admins", [
+      {
+        id: 1,
+        name: "Admin1",
+        email: "admin1@example.com",
         password:
           "$2a$12$.HOb8SlLxGN4usHDihNaQe6IFDodXO09pO6Nfi.M96XzcTJ9F1HDu", // Qwerty123
       },

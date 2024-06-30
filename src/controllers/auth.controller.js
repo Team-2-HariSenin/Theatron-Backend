@@ -1,4 +1,4 @@
-const { user: UserModel } = require("../models");
+const { user: UserModel, admin: AdminModel } = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -41,41 +41,54 @@ const register = async (req, res, next) => {
  * @param {import("express").NextFunction} next
  */
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  await UserModel.findOne({
-    attributes: ["id", "name", "email", "password"],
-    where: { email },
-  })
-    .then(async (user) => {
+    // Check for admin first
+    let user = await AdminModel.findOne({
+      attributes: ["id", "name", "email", "password"],
+      where: { email },
+    });
+
+    if (!user) {
+      // If not found, check for normal user
+      user = await UserModel.findOne({
+        attributes: ["id", "name", "email", "password"],
+        where: { email },
+      });
+
       if (!user) {
         return res.status(401).send({
           message: "Invalid email / password",
           data: null,
         });
       }
+    }
 
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).send({
-          message: "Invalid email / password",
-          data: null,
-        });
-      }
-
-      const token = jwt.sign(
-        { id: user.id, name: user.name, email: user.email },
-        process.env.JWT_SECRET
-      );
-
-      return res.send({
-        message: "User successfully logged in",
-        data: { token },
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({
+        message: "Invalid email / password",
+        data: null,
       });
-    })
-    .catch((err) => {
-      next(err);
+    }
+
+    const token = jwt.sign(
+      user instanceof AdminModel
+        ? { id: user.id, name: user.name, email: user.email, isAdmin: true }
+        : { id: user.id, name: user.name, email: user.email },
+      process.env.JWT_SECRET
+    );
+
+    return res.send({
+      message: `${
+        user instanceof AdminModel ? "Admin" : "User"
+      } successfully logged in`,
+      data: { token, isAdmin: user instanceof AdminModel },
     });
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = { register, login };

@@ -30,6 +30,10 @@ app.use("/api/watchlist", watchlistRouter);
 app.use("/api/rate", rateRouter);
 app.use("/api/admin", adminRouter);
 
+app.post("/test", (req, res) => {
+  console.log(req.body);
+});
+
 app.listen(process.env.SERVER_PORT || 3000, () => {
   console.log("Server Running");
 });
