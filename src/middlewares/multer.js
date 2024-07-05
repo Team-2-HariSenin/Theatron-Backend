@@ -13,13 +13,10 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    if (file.fieldname === "image") {
-      const filename = `image${Date.now()}${path.extname(file.originalname)}`;
-      cb(null, filename);
-    } else if (file.fieldname === "poster") {
-      const filename = `poster${Date.now()}${path.extname(file.originalname)}`;
-      cb(null, filename);
-    }
+    const filename = `${file.fieldname}${Date.now()}${path.extname(
+      file.originalname
+    )}`;
+    cb(null, filename);
   },
 });
 
@@ -56,7 +53,7 @@ module.exports = (req, res, next) => {
 
     const image = req.files["image"] ? req.files["image"][0] : null;
     const poster = req.files["poster"] ? req.files["poster"][0] : null;
-    // Ensure files exist before proceeding
+
     if (!image || !poster) {
       return res.status(400).json({ message: "Files are missing." });
     }
@@ -65,48 +62,34 @@ module.exports = (req, res, next) => {
     try {
       const url_image = await cloudinary.uploader.upload(
         filePath + image.filename,
-        { folder: "Image", use_filename: true, unique_filename: false },
-        function (err, result) {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              success: false,
-              message: "Error",
-            });
-          }
-        }
+        { folder: "Image", use_filename: true, unique_filename: false }
       );
 
       const url_poster = await cloudinary.uploader.upload(
         filePath + poster.filename,
-        { folder: "Poster", use_filename: true, unique_filename: false },
-        function (err, result) {
-          if (err) {
-            console.log(err);
-            return res.status(500).json({
-              success: false,
-              message: "Error",
-            });
-          }
-        }
+        { folder: "Poster", use_filename: true, unique_filename: false }
       );
-      req.body = JSON.parse(JSON.stringify(req.body));
 
       req.body = {
         ...req.body,
         url_image: url_image.secure_url,
         url_poster: url_poster.secure_url,
       };
+      next();
     } catch (err) {
-      console.error(err);
+      console.error("Error uploading to Cloudinary:", err);
       res.status(500).json({
         success: false,
         message: "Error uploading to Cloudinary",
+        error: err.message, // Include the error message in the response
       });
     } finally {
-      fs.unlinkSync(filePath + image.filename);
-      fs.unlinkSync(filePath + poster.filename);
+      try {
+        fs.unlinkSync(filePath + image.filename);
+        fs.unlinkSync(filePath + poster.filename);
+      } catch (err) {
+        console.error("Error deleting local files:", err);
+      }
     }
-    next();
   });
 };

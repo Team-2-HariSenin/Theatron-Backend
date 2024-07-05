@@ -40,6 +40,39 @@ const register = async (req, res, next) => {
  * @param {import("express").Response} res
  * @param {import("express").NextFunction} next
  */
+const addAdmin = async (req, res, next) => {
+  const { name, email, password } = req.body;
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  console.log("passwordHash", passwordHash);
+  await AdminModel.create({
+    name,
+    email,
+    password: passwordHash,
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(500).send({
+          message: "Failed to add Admin",
+          data: null,
+        });
+      }
+
+      return res.status(201).send({
+        message: "Admin successfully added",
+        data: null,
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @param {import("express").NextFunction} next
+ */
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -91,4 +124,4 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login };
+module.exports = { register, login, addAdmin };

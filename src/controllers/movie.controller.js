@@ -1,4 +1,5 @@
 const { where } = require("sequelize");
+const { Op } = require("sequelize");
 const {
   movie: MovieModel,
   trailer: TrailerModel,
@@ -88,10 +89,68 @@ const movieDetail = async (req, res, next) => {
   }
 };
 
+const allMovie = async (req, res, next) => {
+  try {
+    let { keyword, page, limit } = req.query;
+    // Set default value for page and limit
+    page = parseInt(page || 1);
+    limit = parseInt(limit || 10);
+
+    const query = {
+      attributes: [
+        "id",
+        "name",
+        "url_poster",
+        [
+          sequelize.literal(`(
+            SELECT AVG(rates.rate)
+            FROM rates
+            WHERE rates.id_movie = movie.id
+          )`),
+          "rate_average",
+        ],
+        [
+          sequelize.literal(`(
+            SELECT COUNT(rates.id)
+            FROM rates
+            WHERE rates.id_movie = movie.id
+          )`),
+          "rate_count",
+        ],
+      ],
+      offset: (page - 1) * limit,
+      limit,
+      order: [[MovieModel.sequelize.literal("rate_count"), "DESC"]],
+    };
+
+    // Add where clause if keyword is provided
+    if (keyword) {
+      query.where = {
+        name: {
+          [Op.like]: `%${keyword}%`,
+        },
+      };
+    }
+
+    // Fetch the associated movies with a limit
+    const movies = await MovieModel.findAll(query);
+
+    // Combine the results and send the response
+    res.json({
+      message: "Success",
+      data: { movies },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
 const byCategory = async (req, res, next) => {
   try {
-    let { limit } = req.query;
-    limit = parseInt(limit) || 10;
+    let { page, limit } = req.query;
+    // Set default value for page and limit
+    page = parseInt(page || 1);
+    limit = parseInt(limit || 10);
     const { id_category } = req.params;
 
     // Fetch the category first
@@ -135,7 +194,9 @@ const byCategory = async (req, res, next) => {
           through: { attributes: [] },
         },
       ],
+      offset: (page - 1) * limit,
       limit,
+      order: [[MovieModel.sequelize.literal("rate_count"), "DESC"]],
     });
 
     // Combine the results and send the response
@@ -321,4 +382,39 @@ const byDirector = async (req, res, next) => {
   }
 };
 
-module.exports = { movieDetail, byCategory, byWriter, byDirector, byStar };
+const getAllCategory = async (req, res, next) => {
+  let { keyword } = req.query;
+  try {
+    const query = {
+      attributes: ["id", "name"],
+      order: ["name"],
+    };
+
+    if (keyword) {
+      query.where = {
+        name: {
+          [Op.like]: `%${keyword}%`,
+        },
+      };
+    }
+    const categories = await CategoryModel.findAll(query);
+    res.json({
+      message: "Success",
+      data: categories.map((category) => {
+        return { id: category.id, name: category.name };
+      }),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+module.exports = {
+  movieDetail,
+  allMovie,
+  byCategory,
+  byWriter,
+  byDirector,
+  byStar,
+  getAllCategory,
+};

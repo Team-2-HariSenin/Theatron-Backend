@@ -124,4 +124,4 @@ const validateLogin = (req, res, next) => {
   next();
 };
 
-module.exports = { validateRegister, validateLogin };
+module.exports = { validateRegister, validateRegisterAdmin, validateLogin };

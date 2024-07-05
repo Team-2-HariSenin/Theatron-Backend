@@ -10,8 +10,11 @@ const {
   movie_star: MovieStarModel,
   movie_category: MovieCategoryModel,
   trailer: TrailerModel,
+  user: UserModel,
+  admin: AdminModel,
 } = require("../models");
 const axios = require("axios");
+const { Op } = require("sequelize");
 
 const addMovie = async (req, res, next) => {
   const transaction = await sequelize.transaction();
@@ -20,43 +23,18 @@ const addMovie = async (req, res, next) => {
   let movie;
   let directorData;
   try {
-    if (typeof director.id === "number") {
+    if (typeof director === "number") {
       movie = await MovieModel.create(
         {
           name,
           overview,
-
-          id_director: director.id,
+          id_director: director,
         },
         { transaction }
       );
-
       directorData = await DirectorModel.findOne({
         attributes: ["id", "name"],
-        where: { id: director.id },
-        transaction,
-      });
-    } else if (director.name) {
-      const createDirector = await DirectorModel.create(
-        {
-          name: director.name,
-        },
-        { transaction }
-      );
-
-      movie = await MovieModel.create(
-        {
-          name,
-          overview,
-
-          id_director: createDirector.id,
-        },
-        { transaction }
-      );
-
-      directorData = await DirectorModel.findOne({
-        attributes: ["id", "name"],
-        where: { id: createDirector.id },
+        where: { id: director },
         transaction,
       });
     } else {
@@ -72,36 +50,17 @@ const addMovie = async (req, res, next) => {
     const writers = await Promise.all(
       writer.map(async (w) => {
         let writerData;
-        if (typeof w.id === "number") {
+        if (typeof w === "number") {
           await MovieWriterModel.create(
             {
               id_movie: movie.id,
-              id_writer: w.id,
+              id_writer: w,
             },
             { transaction }
           );
           writerData = await WriterModel.findOne({
             attributes: ["id", "name"],
-            where: { id: w.id },
-            transaction,
-          });
-        } else if (w.name) {
-          const createWriter = await WriterModel.create(
-            {
-              name: w.name,
-            },
-            { transaction }
-          );
-          await MovieWriterModel.create(
-            {
-              id_movie: movie.id,
-              id_writer: createWriter.id,
-            },
-            { transaction }
-          );
-          writerData = await WriterModel.findOne({
-            attributes: ["id", "name"],
-            where: { id: createWriter.id },
+            where: { id: w },
             transaction,
           });
         }
@@ -112,36 +71,17 @@ const addMovie = async (req, res, next) => {
     const stars = await Promise.all(
       star.map(async (s) => {
         let starData;
-        if (typeof s.id === "number") {
+        if (typeof s === "number") {
           await MovieStarModel.create(
             {
               id_movie: movie.id,
-              id_star: s.id,
+              id_star: s,
             },
             { transaction }
           );
           starData = await StarModel.findOne({
             attributes: ["id", "name"],
-            where: { id: s.id },
-            transaction,
-          });
-        } else if (s.name) {
-          const createStar = await StarModel.create(
-            {
-              name: s.name,
-            },
-            { transaction }
-          );
-          await MovieStarModel.create(
-            {
-              id_movie: movie.id,
-              id_star: createStar.id,
-            },
-            { transaction }
-          );
-          starData = await StarModel.findOne({
-            attributes: ["id", "name"],
-            where: { id: createStar.id },
+            where: { id: s },
             transaction,
           });
         }
@@ -152,36 +92,17 @@ const addMovie = async (req, res, next) => {
     const categories = await Promise.all(
       category.map(async (c) => {
         let categoryData;
-        if (typeof c.id === "number") {
+        if (typeof c === "number") {
           await MovieCategoryModel.create(
             {
               id_movie: movie.id,
-              id_category: c.id,
+              id_category: c,
             },
             { transaction }
           );
           categoryData = await CategoryModel.findOne({
             attributes: ["id", "name"],
-            where: { id: c.id },
-            transaction,
-          });
-        } else if (c.name) {
-          const createCategory = await CategoryModel.create(
-            {
-              name: c.name,
-            },
-            { transaction }
-          );
-          await MovieCategoryModel.create(
-            {
-              id_movie: movie.id,
-              id_category: createCategory.id,
-            },
-            { transaction }
-          );
-          categoryData = await CategoryModel.findOne({
-            attributes: ["id", "name"],
-            where: { id: createCategory.id },
+            where: { id: c },
             transaction,
           });
         }
@@ -191,9 +112,15 @@ const addMovie = async (req, res, next) => {
 
     await transaction.commit();
 
-    return res.json({
+    return res.status(201).json({
       message: "Movie added successfully",
-      data: movie,
+      data: {
+        ...movie.toJSON(),
+        director: directorData,
+        writers,
+        stars,
+        categories,
+      },
     });
   } catch (error) {
     await transaction.rollback();
@@ -277,11 +204,240 @@ const addTrailer = async (req, res, next) => {
     );
 
     await transaction.commit();
-    res.json({ message: "Trailer Added successfully", data: trailers });
+    res
+      .status(201)
+      .json({ message: "Trailer Added successfully", data: trailers });
   } catch (error) {
     await transaction.rollback();
     res.status(500).json({ message: "Error", error: error.message });
   }
 };
 
-module.exports = { addMovie, addTrailer };
+const addDirector = async (req, res, next) => {
+  const { name } = req.body;
+  const transaction = await sequelize.transaction();
+  try {
+    const director = await DirectorModel.create(
+      {
+        name,
+      },
+      { transaction }
+    );
+    await transaction.commit();
+    res
+      .status(201)
+      .json({ message: "Director added successfully", data: director });
+  } catch (error) {
+    await transaction.rollback();
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const addWriter = async (req, res, next) => {
+  const { name } = req.body;
+  const transaction = await sequelize.transaction();
+  try {
+    const writer = await WriterModel.create(
+      {
+        name,
+      },
+      { transaction }
+    );
+    await transaction.commit();
+    res
+      .status(201)
+      .json({ message: "Writer added successfully", data: writer });
+  } catch (error) {
+    await transaction.rollback();
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const addStar = async (req, res, next) => {
+  const { name } = req.body;
+  const transaction = await sequelize.transaction();
+  try {
+    const star = await StarModel.create(
+      {
+        name,
+      },
+      { transaction }
+    );
+    await transaction.commit();
+    res.status(201).json({ message: "Star added successfully", data: star });
+  } catch (error) {
+    await transaction.rollback();
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const addCategory = async (req, res, next) => {
+  const { name } = req.body;
+  const transaction = await sequelize.transaction();
+  try {
+    const category = await CategoryModel.create(
+      {
+        name,
+      },
+      { transaction }
+    );
+    await transaction.commit();
+    res
+      .status(201)
+      .json({ message: "Category added successfully", data: category });
+  } catch (error) {
+    await transaction.rollback();
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const getAllUser = async (req, res, next) => {
+  let { keyword } = req.query;
+
+  try {
+    const query = {
+      attributes: ["id", "name", "email"],
+      order: ["name"],
+    };
+    // Add where clause if keyword is provided
+    if (keyword) {
+      query.where = {
+        email: {
+          [Op.like]: `%${keyword}%`,
+        },
+      };
+    }
+    const users = await UserModel.findAll(query);
+    res.json({
+      message: "Success",
+      data: users.map((user) => {
+        return { id: user.id, name: user.name };
+      }),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const getAllAdmin = async (req, res, next) => {
+  let { keyword } = req.query;
+
+  try {
+    const query = {
+      attributes: ["id", "name", "email"],
+      order: ["name"],
+    };
+    if (keyword) {
+      query.where = {
+        email: {
+          [Op.like]: `%${keyword}%`,
+        },
+      };
+    }
+    const admins = await AdminModel.findAll(query);
+    res.json({
+      message: "Success",
+      data: admins.map((admin) => {
+        return { id: admin.id, name: admin.name };
+      }),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const getAllWriter = async (req, res, next) => {
+  let { keyword } = req.query;
+
+  try {
+    const query = {
+      attributes: ["id", "name"],
+      order: ["name"],
+    };
+
+    if (keyword) {
+      query.where = {
+        name: {
+          [Op.like]: `%${keyword}%`,
+        },
+      };
+    }
+    const writers = await WriterModel.findAll(query);
+    res.json({
+      message: "Success",
+      data: writers.map((writer) => {
+        return { id: writer.id, name: writer.name };
+      }),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const getAllStar = async (req, res, next) => {
+  let { keyword } = req.query;
+  try {
+    const query = {
+      attributes: ["id", "name"],
+      order: ["name"],
+    };
+
+    if (keyword) {
+      query.where = {
+        name: {
+          [Op.like]: `%${keyword}%`,
+        },
+      };
+    }
+    const stars = await StarModel.findAll(query);
+    res.json({
+      message: "Success",
+      data: stars.map((star) => {
+        return { id: star.id, name: star.name };
+      }),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+const getAllDirector = async (req, res, next) => {
+  let { keyword } = req.query;
+  try {
+    const query = {
+      attributes: ["id", "name"],
+      order: ["name"],
+    };
+
+    if (keyword) {
+      query.where = {
+        name: {
+          [Op.like]: `%${keyword}%`,
+        },
+      };
+    }
+    const directors = await DirectorModel.findAll(query);
+    res.json({
+      message: "Success",
+      data: directors.map((director) => {
+        return { id: director.id, name: director.name };
+      }),
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
+module.exports = {
+  addMovie,
+  addTrailer,
+  addDirector,
+  addWriter,
+  addStar,
+  addCategory,
+  getAllUser,
+  getAllAdmin,
+  getAllWriter,
+  getAllStar,
+  getAllDirector,
+};

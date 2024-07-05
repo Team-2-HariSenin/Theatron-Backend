@@ -1,13 +1,8 @@
 const { sequelize } = require("../models");
 const { movie: MovieModel } = require("../models");
-const express = require("express");
-const cloudinary = require("../config/cloudinary");
-const path = require("path");
-const fs = require("fs");
 
 const addImage = async (req, res, next) => {
-  const { id_movie } = req.query;
-  const { url_image, url_poster } = req.body;
+  const { id_movie, url_image, url_poster } = req.body;
   const transaction = await sequelize.transaction();
 
   try {
@@ -25,7 +20,7 @@ const addImage = async (req, res, next) => {
     await movie.save({ transaction });
 
     await transaction.commit();
-    return res.json({
+    return res.status(201).json({
       message: "Image added successfully",
       data: movie,
     });
