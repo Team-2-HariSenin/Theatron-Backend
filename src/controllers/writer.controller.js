@@ -1,5 +1,5 @@
 const { sequelize } = require("../models");
-const { writer: WriterModel } = require("../models");
+const { writer: WriterModel, movie: MovieModel } = require("../models");
 const { Op } = require("sequelize");
 
 const addWriter = async (req, res, next) => {

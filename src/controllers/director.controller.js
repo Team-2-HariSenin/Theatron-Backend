@@ -1,5 +1,5 @@
 const { sequelize } = require("../models");
-const { director: DirectorModel } = require("../models");
+const { director: DirectorModel, movie: MovieModel } = require("../models");
 const { Op } = require("sequelize");
 
 const addDirector = async (req, res, next) => {

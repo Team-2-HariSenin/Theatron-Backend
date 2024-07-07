@@ -1,5 +1,5 @@
 const { sequelize } = require("../models");
-const { star: StarModel } = require("../models");
+const { star: StarModel, movie: MovieModel } = require("../models");
 
 const { Op } = require("sequelize");
 

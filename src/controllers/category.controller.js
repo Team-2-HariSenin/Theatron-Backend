@@ -1,5 +1,6 @@
+const { Op } = require("sequelize");
 const { sequelize } = require("../models");
-const { category: CategoryModel } = require("../models");
+const { category: CategoryModel, movie: MovieModel } = require("../models");
 
 const addCategory = async (req, res, next) => {
   const { name } = req.body;
