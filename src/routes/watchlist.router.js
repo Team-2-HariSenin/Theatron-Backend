@@ -9,8 +9,8 @@ const {
   chekWatchlist,
 } = require("../controllers/watchlist.contoller");
 
-router.get("/", verifyToken, index);
-router.get("/:id_movie", verifyToken, chekWatchlist);
 router.post("/toggle", verifyToken, watchlistToggle);
+router.get("/:id_movie", verifyToken, chekWatchlist);
+router.get("/", verifyToken, index);
 
 module.exports = router;

@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const {
   movie: MovieModel,
   watchlist: WatchlistModel,

@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const { rate: RateModel } = require("../models");
 
 /**

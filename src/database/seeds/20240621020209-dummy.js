@@ -96,9 +96,9 @@ module.exports = {
         overview:
           "Raia is a famous writer who suffers from writer's block. In order to get inspired again, he then went to New York. It was in that city that Raia met River and then got involved in a love story that was overshadowed by the past.",
         url_poster:
-          "https://image.tmdb.org/t/p/w500/4tT9N7IeZtvWYsbGJsbIOGQ36b5.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320366/Poster/poster1720320354523.jpg",
         url_image:
-          "https://image.tmdb.org/t/p/original/cJ8o1PlMJqB1MayCJ7NeofYX1My.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320358/Image/image1720320354516.jpg",
         id_director: 1,
       },
       {
@@ -107,9 +107,9 @@ module.exports = {
         overview:
           "The story of a man who felt down and lost faith after experiencing the tragedy of losing his wife and children on the first night of Suro.",
         url_poster:
-          "https://image.tmdb.org/t/p/w500/fPmP68Y4Bn3pS1FICpCC7NJMMjj.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320540/Poster/poster1720320537202.jpg",
         url_image:
-          "https://image.tmdb.org/t/p/original/vriMtND9PhI7lBQI6n0yUsJ6msP.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320539/Image/image1720320537201.jpg",
         id_director: 2,
       },
       {
@@ -118,9 +118,9 @@ module.exports = {
         overview:
           "A hitman, his boss, an art dealer and a money-laundering scheme that accidentally turns the assassin into an overnight avant-garde sensation, one that forces her to play the art world against the underworld.",
         url_poster:
-          "https://image.tmdb.org/t/p/w500/qKpdy7N6zX05eisopvvviiTwPxb.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320629/Poster/poster1720320621383.jpg",
         url_image:
-          "https://image.tmdb.org/t/p/original/bylJq7JEA87YqHMObZUnaP292T2.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320627/Image/image1720320621376.jpg",
         id_director: 3,
       },
       {
@@ -129,9 +129,9 @@ module.exports = {
         overview:
           "Exploring the company founding and the implosion of the business by outside investors who took over the company, left it bankrupt and under investigation.",
         url_poster:
-          "https://image.tmdb.org/t/p/w500/eWht9uFRrqmqnLDL5F9grwUiL62.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320765/Poster/poster1720320760606.jpg",
         url_image:
-          "https://image.tmdb.org/t/p/original/plGXY8pYzdYKCupiFXh5QRtpTyK.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320763/Image/image1720320760603.jpg",
         id_director: 4,
       },
       {
@@ -140,9 +140,9 @@ module.exports = {
         overview:
           "Follow the veterans and newest class of Navy and Marine Corps flight squadron as they go through intense training and into a season of heart-stopping aerial artistry.",
         url_poster:
-          "https://image.tmdb.org/t/p/w500/tdcVDWLfesmPG9NsPEzxpFMXgcB.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320836/Poster/poster1720320831561.jpg",
         url_image:
-          "https://image.tmdb.org/t/p/original/45mbpJFLxSFLdBT5PEM9HISrLEv.jpg",
+          "https://res.cloudinary.com/dsceqfqal/image/upload/v1720320834/Image/image1720320831558.jpg",
         id_director: 5,
       },
     ]);
