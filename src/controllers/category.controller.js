@@ -23,7 +23,7 @@ const addCategory = async (req, res, next) => {
 };
 
 const getAllCategory = async (req, res, next) => {
-  let { keyword, page, limit } = req.query;
+  let { id_category, keyword, page, limit } = req.query;
   // Set default value for page and limit
   page = parseInt(page || 1);
   limit = parseInt(limit || 10);
@@ -51,6 +51,12 @@ const getAllCategory = async (req, res, next) => {
         name: {
           [Op.like]: `%${keyword}%`,
         },
+      };
+    }
+
+    if (id_category) {
+      query.where = {
+        id: id_category,
       };
     }
 

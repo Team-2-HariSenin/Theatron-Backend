@@ -100,7 +100,7 @@ const chekWatchlist = async (req, res, next) => {
 const watchlistToggle = async (req, res, next) => {
   try {
     const id_user = req.user.id;
-    let { id_movie } = req.query;
+    let { id_movie } = req.body;
     id_movie = parseInt(id_movie);
     if (!id_movie) {
       return res.status(400).json({ message: "Please select the movie" });
@@ -112,7 +112,7 @@ const watchlistToggle = async (req, res, next) => {
     if (!existingMovie) {
       return res.status(400).json({ message: "Movie not found" });
     }
-    // Check if the like already exists
+    // Check if the watchlist already exists
     const existingWatchlist = await WatchlistModel.findOne({
       where: { id_user, id_movie },
     });

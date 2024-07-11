@@ -398,9 +398,62 @@ const allMovie = async (req, res, next) => {
   }
 };
 
+const moviePlayNow = async (req, res, next) => {
+  try {
+    const movie = await MovieModel.findAll({
+      attributes: [
+        "id",
+        "name",
+        "url_poster",
+        "url_image",
+        "overview",
+        "createdAt",
+        [
+          sequelize.literal(`(
+                SELECT AVG(rates.rate)
+                FROM rates
+                WHERE rates.id_movie = movie.id
+              )`),
+          "rate_average",
+        ],
+        [
+          sequelize.literal(`(
+                SELECT COUNT(rates.id)
+                FROM rates
+                WHERE rates.id_movie = movie.id
+              )`),
+          "rate_count",
+        ],
+        [
+          sequelize.literal(`(
+                SELECT COUNT(watchlists.id)
+                FROM watchlists
+                WHERE watchlists.id_movie = movie.id
+              )`),
+          "watchlist_count",
+        ],
+      ],
+      include: [
+        {
+          model: TrailerModel,
+          as: "trailers",
+          attributes: { exclude: ["createdAt", "updatedAt"] },
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      limit: 6,
+    });
+
+    res.json({ message: "Success", data: movie });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
 module.exports = {
   movieDetail,
   allMovie,
   addMovie,
   updateMovie,
+  moviePlayNow,
 };
