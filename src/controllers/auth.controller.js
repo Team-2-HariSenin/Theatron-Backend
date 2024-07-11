@@ -77,7 +77,7 @@ const login = async (req, res, next) => {
     const token = jwt.sign(
       user instanceof AdminModel
         ? { id: user.id, name: user.name, email: user.email, isAdmin: true }
-        : { id: user.id, name: user.name, email: user.email },
+        : { id: user.id, name: user.name, email: user.email, isAdmin: false },
       process.env.JWT_SECRET
     );
 
@@ -85,7 +85,7 @@ const login = async (req, res, next) => {
       message: `${
         user instanceof AdminModel ? "Admin" : "User"
       } successfully logged in`,
-      data: { token, isAdmin: user instanceof AdminModel },
+      data: { token },
     });
   } catch (err) {
     next(err);

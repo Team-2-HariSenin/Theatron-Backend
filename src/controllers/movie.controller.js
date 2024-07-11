@@ -9,6 +9,7 @@ const {
   movie_star: MovieStarModel,
   movie_category: MovieCategoryModel,
   trailer: TrailerModel,
+  watchlist: WatchlistModel,
 } = require("../models");
 const { Op } = require("sequelize");
 
@@ -400,7 +401,7 @@ const allMovie = async (req, res, next) => {
 
 const moviePlayNow = async (req, res, next) => {
   try {
-    const movie = await MovieModel.findAll({
+    const query = {
       attributes: [
         "id",
         "name",
@@ -442,9 +443,11 @@ const moviePlayNow = async (req, res, next) => {
       ],
       order: [["createdAt", "DESC"]],
       limit: 6,
-    });
+    };
 
-    res.json({ message: "Success", data: movie });
+    const movies = await MovieModel.findAll(query);
+
+    res.json({ message: "Success", data: movies });
   } catch (error) {
     res.status(500).json({ message: "Error", error: error.message });
   }
