@@ -10,6 +10,7 @@ const movieRouter = require("./routes/movie.router.js");
 const watchlistRouter = require("./routes/watchlist.router.js");
 const rateRouter = require("./routes/rate.router.js");
 const adminRouter = require("./routes/admin.router.js");
+const userRouter = require("./routes/user.router.js");
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/api/movie", movieRouter);
 app.use("/api/watchlist", watchlistRouter);
 app.use("/api/rate", rateRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/user", userRouter);
 
 app.post("/test", (req, res) => {
   console.log(req.body);
