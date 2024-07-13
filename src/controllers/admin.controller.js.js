@@ -45,7 +45,7 @@ const getAllAdmin = async (req, res, next) => {
     if (keyword) {
       query.where = {
         email: {
-          [Op.like]: `%${keyword}%`,
+          [Op.like]: `${keyword}%`,
         },
       };
     }
@@ -56,7 +56,7 @@ const getAllAdmin = async (req, res, next) => {
       ? await AdminModel.count({
           where: {
             name: {
-              [Op.like]: `%${keyword}%`,
+              [Op.like]: `${keyword}%`,
             },
           },
         })

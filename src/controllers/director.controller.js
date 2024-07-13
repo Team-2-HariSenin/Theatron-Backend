@@ -49,7 +49,7 @@ const getAllDirector = async (req, res, next) => {
     if (keyword) {
       query.where = {
         name: {
-          [Op.like]: `%${keyword}%`,
+          [Op.like]: `${keyword}%`,
         },
       };
     }
@@ -61,7 +61,7 @@ const getAllDirector = async (req, res, next) => {
       ? await DirectorModel.count({
           where: {
             name: {
-              [Op.like]: `%${keyword}%`,
+              [Op.like]: `${keyword}%`,
             },
           },
         })

@@ -48,7 +48,7 @@ const getAllStar = async (req, res, next) => {
     if (keyword) {
       query.where = {
         name: {
-          [Op.like]: `%${keyword}%`,
+          [Op.like]: `${keyword}%`,
         },
       };
     }
@@ -59,7 +59,7 @@ const getAllStar = async (req, res, next) => {
       ? await StarModel.count({
           where: {
             name: {
-              [Op.like]: `%${keyword}%`,
+              [Op.like]: `${keyword}%`,
             },
           },
         })

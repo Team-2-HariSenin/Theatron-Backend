@@ -129,7 +129,7 @@ const getAllUser = async (req, res, next) => {
     if (keyword) {
       query.where = {
         email: {
-          [Op.like]: `%${keyword}%`,
+          [Op.like]: `${keyword}%`,
         },
       };
     }
@@ -140,7 +140,7 @@ const getAllUser = async (req, res, next) => {
       ? await UserModel.count({
           where: {
             name: {
-              [Op.like]: `%${keyword}%`,
+              [Op.like]: `${keyword}%`,
             },
           },
         })

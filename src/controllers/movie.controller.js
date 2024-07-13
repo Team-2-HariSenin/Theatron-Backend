@@ -94,7 +94,16 @@ const movieDetail = async (req, res, next) => {
 
 const addMovie = async (req, res, next) => {
   const transaction = await sequelize.transaction();
-  const { name, overview, director, writer, star, category } = req.body;
+  const {
+    name,
+    overview,
+    director,
+    writer,
+    star,
+    category,
+    url_image,
+    url_poster,
+  } = req.body;
 
   let movie;
   let directorData;
@@ -105,6 +114,12 @@ const addMovie = async (req, res, next) => {
           name,
           overview,
           id_director: director,
+          url_image: url_image
+            ? `https://image.tmdb.org/t/p/original/${url_image}`
+            : null,
+          url_poster: url_poster
+            ? `https://image.tmdb.org/t/p/original/${url_poster}`
+            : null,
         },
         { transaction }
       );
@@ -118,6 +133,12 @@ const addMovie = async (req, res, next) => {
         {
           name,
           overview,
+          url_image: url_image
+            ? `https://image.tmdb.org/t/p/original/${url_image}`
+            : null,
+          url_poster: url_poster
+            ? `https://image.tmdb.org/t/p/original/${url_poster}`
+            : null,
         },
         { transaction }
       );
@@ -329,12 +350,13 @@ const allMovie = async (req, res, next) => {
     let { keyword, page, limit } = req.query;
     // Set default value for page and limit
     page = parseInt(page || 1);
-    limit = parseInt(limit || 10);
+    limit = parseInt(limit);
 
     const query = {
       attributes: [
         "id",
         "name",
+        "overview",
         "url_poster",
         [
           sequelize.literal(`(
@@ -362,15 +384,18 @@ const allMovie = async (req, res, next) => {
         ],
       ],
       offset: (page - 1) * limit,
-      limit,
       order: [[MovieModel.sequelize.literal("rate_count"), "DESC"]],
     };
+
+    if (limit) {
+      query.limit = limit;
+    }
 
     // Add where clause if keyword is provided
     if (keyword) {
       query.where = {
         name: {
-          [Op.like]: `%${keyword}%`,
+          [Op.like]: `${keyword}%`,
         },
       };
     }
@@ -383,7 +408,7 @@ const allMovie = async (req, res, next) => {
       ? await MovieModel.count({
           where: {
             name: {
-              [Op.like]: `%${keyword}%`,
+              [Op.like]: `${keyword}%`,
             },
           },
         })

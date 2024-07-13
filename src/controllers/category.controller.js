@@ -49,7 +49,7 @@ const getAllCategory = async (req, res, next) => {
     if (keyword) {
       query.where = {
         name: {
-          [Op.like]: `%${keyword}%`,
+          [Op.like]: `${keyword}%`,
         },
       };
     }
@@ -67,7 +67,7 @@ const getAllCategory = async (req, res, next) => {
       ? await CategoryModel.count({
           where: {
             name: {
-              [Op.like]: `%${keyword}%`,
+              [Op.like]: `${keyword}%`,
             },
           },
         })
