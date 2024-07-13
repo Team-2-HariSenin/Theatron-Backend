@@ -478,10 +478,21 @@ const moviePlayNow = async (req, res, next) => {
   }
 };
 
+const deleteMovie = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await MovieModel.destroy({ where: { id } });
+    res.status(200).json({ message: "Movie deleted successfully", data: null });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
 module.exports = {
   movieDetail,
   allMovie,
   addMovie,
   updateMovie,
   moviePlayNow,
+  deleteMovie,
 };

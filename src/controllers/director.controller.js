@@ -170,9 +170,20 @@ const byDirector = async (req, res, next) => {
   }
 };
 
+const deleteDirector = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await DirectorModel.destroy({ where: { id} });
+    res.status(200).json({ message: "Director deleted successfully", data: null });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
 module.exports = {
   addDirector,
   updateDirector,
   getAllDirector,
   byDirector,
+  deleteDirector,
 };

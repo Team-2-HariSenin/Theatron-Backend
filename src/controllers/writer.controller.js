@@ -168,9 +168,22 @@ const byWriter = async (req, res, next) => {
   }
 };
 
+const deleteWriter = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await WriterModel.destroy({ where: { id: id } });
+    res
+      .status(200)
+      .json({ message: "Writer deleted successfully", data: null });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
 module.exports = {
   addWriter,
   updateWriter,
   getAllWriter,
   byWriter,
+  deleteWriter,
 };

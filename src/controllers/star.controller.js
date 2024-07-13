@@ -165,9 +165,21 @@ const byStar = async (req, res, next) => {
   }
 };
 
+const deleteStar = async (req, res, next) => {
+  console.log(req.params);
+  try {
+    const { id } = req.params;
+    await StarModel.destroy({ where: { id } });
+    res.status(200).json({ message: "Star deleted successfully", data: null });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
 module.exports = {
   addStar,
   updateStar,
   getAllStar,
   byStar,
+  deleteStar,
 };

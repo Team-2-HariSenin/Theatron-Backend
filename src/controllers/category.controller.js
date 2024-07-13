@@ -196,10 +196,23 @@ const byCategory = async (req, res, next) => {
   }
 };
 
+const deleteCategory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await CategoryModel.destroy({ where: { id} });
+    res
+      .status(200)
+      .json({ message: "Category deleted successfully", data: null });
+  } catch (error) {
+    res.status(500).json({ message: "Error", error: error.message });
+  }
+};
+
 module.exports = {
   addCategory,
   updateCategory,
   getAllCategory,
   categoryDetail,
   byCategory,
+  deleteCategory,
 };

@@ -11,7 +11,11 @@ const { addImage, deleteImage } = require("../controllers/image.controller.js");
 const uploadImage = require("../middlewares/multer.js");
 const { validateRegisterAdmin } = require("../middlewares/validator.js");
 const { getAllUser } = require("../controllers/auth.controller.js");
-const { addMovie, updateMovie } = require("../controllers/movie.controller.js");
+const {
+  addMovie,
+  updateMovie,
+  deleteMovie,
+} = require("../controllers/movie.controller.js");
 const {
   addTrailer,
   updateTrailer,
@@ -20,20 +24,24 @@ const {
   addDirector,
   getAllDirector,
   updateDirector,
+  deleteDirector,
 } = require("../controllers/director.controller.js");
 const {
   addWriter,
   getAllWriter,
   updateWriter,
+  deleteWriter,
 } = require("../controllers/writer.controller.js");
 const {
   addStar,
   getAllStar,
   updateStar,
+  deleteStar,
 } = require("../controllers/star.controller.js");
 const {
   addCategory,
   updateCategory,
+  deleteCategory,
 } = require("../controllers/category.controller.js");
 
 router.post("/add-movie", verifyTokenAdmin, addMovie);
@@ -56,5 +64,10 @@ router.put("/update-writer", verifyTokenAdmin, updateWriter);
 router.put("/update-star", verifyTokenAdmin, updateStar);
 router.put("/update-director", verifyTokenAdmin, updateDirector);
 router.put("/update-trailer", verifyTokenAdmin, updateTrailer);
+router.delete("/delete-movie/:id", verifyTokenAdmin, deleteMovie);
+router.delete("/delete-category/:id", verifyTokenAdmin, deleteCategory);
+router.delete("/delete-writer/:id", verifyTokenAdmin, deleteWriter);
+router.delete("/delete-star/:id", verifyTokenAdmin, deleteStar);
+router.delete("/delete-director/:id", verifyTokenAdmin, deleteDirector);
 
 module.exports = router;
