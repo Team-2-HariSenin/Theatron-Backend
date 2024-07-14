@@ -464,6 +464,7 @@ const moviePlayNow = async (req, res, next) => {
           model: TrailerModel,
           as: "trailers",
           attributes: { exclude: ["createdAt", "updatedAt"] },
+          required: true,
         },
       ],
       order: [["createdAt", "DESC"]],
